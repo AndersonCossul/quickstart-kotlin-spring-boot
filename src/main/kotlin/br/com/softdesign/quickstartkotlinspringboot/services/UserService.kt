@@ -1,5 +1,6 @@
 package br.com.softdesign.quickstartkotlinspringboot.services
 
+import br.com.softdesign.quickstartkotlinspringboot.exceptions.NotFoundException
 import br.com.softdesign.quickstartkotlinspringboot.models.User
 import org.springframework.stereotype.Service
 
@@ -17,7 +18,7 @@ class UserService(
         users = mutableListOf(user)
     }
 
-    fun findById(id: Long): User? {
-        return users.find { x -> x.id == id }
+    fun findById(id: Long): User {
+        return users.find { x -> x.id == id } ?: throw NotFoundException("User not found for id $id")
     }
 }
