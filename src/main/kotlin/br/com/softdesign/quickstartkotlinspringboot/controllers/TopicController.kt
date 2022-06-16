@@ -4,6 +4,8 @@ import br.com.softdesign.quickstartkotlinspringboot.dtos.NewTopicForm
 import br.com.softdesign.quickstartkotlinspringboot.dtos.TopicView
 import br.com.softdesign.quickstartkotlinspringboot.dtos.UpdateTopicForm
 import br.com.softdesign.quickstartkotlinspringboot.services.TopicService
+import org.springframework.cache.annotation.CacheEvict
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.web.PageableDefault
@@ -18,6 +20,7 @@ import javax.validation.Valid
 @RequestMapping("/topics")
 class TopicController(private val topicService: TopicService) {
     @GetMapping
+    @Cacheable("topics")
     fun list(
         @RequestParam(required = false) courseName: String?,
         @PageableDefault(size = 10) pagination: Pageable
@@ -32,6 +35,7 @@ class TopicController(private val topicService: TopicService) {
 
     @PostMapping
     @Transactional
+    @CacheEvict("topics", allEntries = true)
     fun create(
         @RequestBody @Valid form: NewTopicForm,
         uriBuilder: UriComponentsBuilder
@@ -43,6 +47,7 @@ class TopicController(private val topicService: TopicService) {
 
     @PutMapping
     @Transactional
+    @CacheEvict("topics", allEntries = true)
     fun update(@RequestBody @Valid form: UpdateTopicForm): TopicView {
         return topicService.update(form)
     }
@@ -50,6 +55,7 @@ class TopicController(private val topicService: TopicService) {
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Transactional
+    @CacheEvict("topics", allEntries = true)
     fun delete(@PathVariable id: Long) {
         topicService.delete(id)
     }
