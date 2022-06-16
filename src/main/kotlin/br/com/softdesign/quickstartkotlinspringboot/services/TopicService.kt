@@ -16,8 +16,13 @@ class TopicService(
     private val topicViewMapper: TopicViewMapper,
     private val topicFormMapper: TopicFormMapper,
 ) {
-    fun list(): List<TopicView> {
-        return repository.findAll().stream().map { t ->
+    fun list(courseName: String?): List<TopicView> {
+        val topics = if (courseName == null) {
+            repository.findAll()
+        } else {
+            repository.findByCourseName(courseName)
+        }
+        return topics.stream().map { t ->
             topicViewMapper.map(t)
         }.collect(Collectors.toList())
     }

@@ -13,12 +13,10 @@ import javax.validation.Valid
 
 @RestController
 @RequestMapping("/topics")
-class TopicController(
-    private val topicService: TopicService
-) {
+class TopicController(private val topicService: TopicService) {
     @GetMapping
-    fun list(): List<TopicView> {
-        return topicService.list()
+    fun list(@RequestParam(required = false) courseName: String?): List<TopicView> {
+        return topicService.list(courseName)
     }
 
     @GetMapping("/{id}")
