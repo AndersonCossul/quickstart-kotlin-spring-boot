@@ -1,0 +1,19 @@
+server:
+    error:
+        include-stacktrace: never
+spring:
+    database:
+        driverClassName: org.postgresql.Driver
+    datasource:
+        password: postgres
+        platform: postgres
+        url: jdbc:postgresql://localhost:5432/quickstart-kotlin-spring-boot
+        username: postgres
+    jpa:
+        database: POSTGRESQL
+        hibernate:
+            ddl-auto: create-drop
+        show-sql: true
+    output:
+        ansi:
+            enabled: always
