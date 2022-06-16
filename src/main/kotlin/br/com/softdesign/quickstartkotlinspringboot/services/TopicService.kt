@@ -11,12 +11,14 @@ import br.com.softdesign.quickstartkotlinspringboot.repositories.TopicRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
+import javax.persistence.EntityManager
 
 @Service
 class TopicService(
     private val repository: TopicRepository,
     private val topicViewMapper: TopicViewMapper,
     private val topicFormMapper: TopicFormMapper,
+    private val em: EntityManager // in case you need it for some obscure reason, here it is
 ) {
     fun list(
         courseName: String?,
