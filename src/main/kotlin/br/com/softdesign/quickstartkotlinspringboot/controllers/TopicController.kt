@@ -4,6 +4,9 @@ import br.com.softdesign.quickstartkotlinspringboot.dtos.NewTopicForm
 import br.com.softdesign.quickstartkotlinspringboot.dtos.TopicView
 import br.com.softdesign.quickstartkotlinspringboot.dtos.UpdateTopicForm
 import br.com.softdesign.quickstartkotlinspringboot.services.TopicService
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
+import org.springframework.data.web.PageableDefault
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.transaction.annotation.Transactional
@@ -15,8 +18,11 @@ import javax.validation.Valid
 @RequestMapping("/topics")
 class TopicController(private val topicService: TopicService) {
     @GetMapping
-    fun list(@RequestParam(required = false) courseName: String?): List<TopicView> {
-        return topicService.list(courseName)
+    fun list(
+        @RequestParam(required = false) courseName: String?,
+        @PageableDefault(size = 10) pagination: Pageable
+    ): Page<TopicView> {
+        return topicService.list(courseName, pagination)
     }
 
     @GetMapping("/{id}")

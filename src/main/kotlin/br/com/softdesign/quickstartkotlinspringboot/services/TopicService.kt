@@ -7,8 +7,9 @@ import br.com.softdesign.quickstartkotlinspringboot.exceptions.NotFoundException
 import br.com.softdesign.quickstartkotlinspringboot.mappers.TopicFormMapper
 import br.com.softdesign.quickstartkotlinspringboot.mappers.TopicViewMapper
 import br.com.softdesign.quickstartkotlinspringboot.repositories.TopicRepository
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
-import java.util.stream.Collectors
 
 @Service
 class TopicService(
@@ -16,15 +17,16 @@ class TopicService(
     private val topicViewMapper: TopicViewMapper,
     private val topicFormMapper: TopicFormMapper,
 ) {
-    fun list(courseName: String?): List<TopicView> {
+    fun list(
+        courseName: String?,
+        pagination: Pageable
+    ): Page<TopicView> {
         val topics = if (courseName == null) {
-            repository.findAll()
+            repository.findAll(pagination)
         } else {
-            repository.findByCourseName(courseName)
+            repository.findByCourseName(courseName, pagination)
         }
-        return topics.stream().map { t ->
-            topicViewMapper.map(t)
-        }.collect(Collectors.toList())
+        return topics.map { t -> topicViewMapper.map(t) }
     }
 
     fun findById(id: Long): TopicView {
