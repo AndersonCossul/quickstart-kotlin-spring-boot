@@ -1,6 +1,7 @@
 package br.com.softdesign.quickstartkotlinspringboot.services
 
 import br.com.softdesign.quickstartkotlinspringboot.dtos.NewTopicForm
+import br.com.softdesign.quickstartkotlinspringboot.dtos.TopicByCategoryDto
 import br.com.softdesign.quickstartkotlinspringboot.dtos.TopicView
 import br.com.softdesign.quickstartkotlinspringboot.dtos.UpdateTopicForm
 import br.com.softdesign.quickstartkotlinspringboot.exceptions.NotFoundException
@@ -60,5 +61,9 @@ class TopicService(
             throw NotFoundException("Topic not found for id $id")
         }
         repository.delete(optional.get())
+    }
+
+    fun report(): List<TopicByCategoryDto> {
+        return repository.report()
     }
 }

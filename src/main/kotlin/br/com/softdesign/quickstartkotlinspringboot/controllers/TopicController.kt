@@ -1,6 +1,7 @@
 package br.com.softdesign.quickstartkotlinspringboot.controllers
 
 import br.com.softdesign.quickstartkotlinspringboot.dtos.NewTopicForm
+import br.com.softdesign.quickstartkotlinspringboot.dtos.TopicByCategoryDto
 import br.com.softdesign.quickstartkotlinspringboot.dtos.TopicView
 import br.com.softdesign.quickstartkotlinspringboot.dtos.UpdateTopicForm
 import br.com.softdesign.quickstartkotlinspringboot.services.TopicService
@@ -58,5 +59,10 @@ class TopicController(private val topicService: TopicService) {
     @CacheEvict("topics", allEntries = true)
     fun delete(@PathVariable id: Long) {
         topicService.delete(id)
+    }
+
+    @GetMapping("/report")
+    fun report(): List<TopicByCategoryDto> {
+        return topicService.report()
     }
 }
