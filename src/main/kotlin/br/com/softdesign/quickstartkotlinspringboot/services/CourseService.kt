@@ -2,22 +2,16 @@ package br.com.softdesign.quickstartkotlinspringboot.services
 
 import br.com.softdesign.quickstartkotlinspringboot.exceptions.NotFoundException
 import br.com.softdesign.quickstartkotlinspringboot.models.Course
+import br.com.softdesign.quickstartkotlinspringboot.repositories.CourseRepository
 import org.springframework.stereotype.Service
 
 @Service
-class CourseService(
-    private var courses: MutableList<Course>
-) {
-    init {
-        val course = Course(
-            id = 1,
-            name = "Kotlin",
-            category = "Programming"
-        )
-        courses = mutableListOf(course)
-    }
-
+class CourseService(private val repository: CourseRepository) {
     fun findById(id: Long): Course {
-        return courses.find { x -> x.id == id } ?: throw NotFoundException("Course not found for id $id")
+        val opt = repository.findById(id)
+        if (opt.isEmpty) {
+            throw NotFoundException("Course not found for id $id")
+        }
+        return opt.get()
     }
 }

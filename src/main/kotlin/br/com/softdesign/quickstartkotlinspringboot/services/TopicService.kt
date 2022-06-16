@@ -6,54 +6,52 @@ import br.com.softdesign.quickstartkotlinspringboot.dtos.UpdateTopicForm
 import br.com.softdesign.quickstartkotlinspringboot.exceptions.NotFoundException
 import br.com.softdesign.quickstartkotlinspringboot.mappers.TopicFormMapper
 import br.com.softdesign.quickstartkotlinspringboot.mappers.TopicViewMapper
-import br.com.softdesign.quickstartkotlinspringboot.models.Topic
+import br.com.softdesign.quickstartkotlinspringboot.repositories.TopicRepository
 import org.springframework.stereotype.Service
 import java.util.stream.Collectors
 
 @Service
 class TopicService(
-    private var topics: MutableList<Topic> = ArrayList(),
+    private val repository: TopicRepository,
     private val topicViewMapper: TopicViewMapper,
     private val topicFormMapper: TopicFormMapper,
 ) {
     fun list(): List<TopicView> {
-        return topics.stream().map { t ->
+        return repository.findAll().stream().map { t ->
             topicViewMapper.map(t)
         }.collect(Collectors.toList())
     }
 
     fun findById(id: Long): TopicView {
-        val topic = topics.find { t -> t.id == id } ?: throw NotFoundException("Topic not found for id $id")
-        return topicViewMapper.map(topic)
+        val optional = repository.findById(id)
+        if (optional.isEmpty) {
+            throw NotFoundException("Topic not found for id $id")
+        }
+        return topicViewMapper.map(optional.get())
     }
 
     fun create(form: NewTopicForm): TopicView {
         val topic = topicFormMapper.map(form)
-        topic.id = topics.size.toLong() + 1
-        topics.add(topic)
+        repository.save(topic)
         return topicViewMapper.map(topic)
     }
 
     fun update(form: UpdateTopicForm): TopicView {
-        val topic = topics.find { t -> t.id == form.id } ?: throw NotFoundException("Topic not found for id ${form.id}")
-        val newTopic = Topic(
-            id = form.id,
-            title = form.title,
-            message = form.message,
-            author = topic.author,
-            course = topic.course,
-            answers = topic.answers,
-            status = topic.status,
-            createdAt = topic.createdAt
-        )
-
-        topics.remove(topic)
-        topics.add(newTopic)
-        return topicViewMapper.map(newTopic)
+        val optional = repository.findById(form.id)
+        if (optional.isEmpty) {
+            throw NotFoundException("Topic not found for id ${form.id}")
+        }
+        val topic = optional.get()
+        topic.title = form.title
+        topic.message = form.message
+        return topicViewMapper.map(topic)
     }
 
     fun delete(id: Long) {
-        val topic = topics.find { t -> t.id == id } ?: throw NotFoundException("Topic not found for id $id")
-        topics.remove(topic)
+        val optional = repository.findById(id)
+        if (optional.isEmpty) {
+            throw NotFoundException("Topic not found for id $id")
+        }
+        repository.delete(optional.get())
     }
 }

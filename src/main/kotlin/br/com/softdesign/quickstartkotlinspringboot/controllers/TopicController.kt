@@ -6,6 +6,7 @@ import br.com.softdesign.quickstartkotlinspringboot.dtos.UpdateTopicForm
 import br.com.softdesign.quickstartkotlinspringboot.services.TopicService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.util.UriComponentsBuilder
 import javax.validation.Valid
@@ -26,6 +27,7 @@ class TopicController(
     }
 
     @PostMapping
+    @Transactional
     fun create(
         @RequestBody @Valid form: NewTopicForm,
         uriBuilder: UriComponentsBuilder
@@ -36,12 +38,14 @@ class TopicController(
     }
 
     @PutMapping
+    @Transactional
     fun update(@RequestBody @Valid form: UpdateTopicForm): TopicView {
         return topicService.update(form)
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Transactional
     fun delete(@PathVariable id: Long) {
         topicService.delete(id)
     }
