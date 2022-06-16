@@ -21,7 +21,7 @@ import javax.validation.Valid
 @RequestMapping("/topics")
 class TopicController(private val topicService: TopicService) {
     @GetMapping
-    @Cacheable("topics")
+    @Cacheable("topics") // Spring Boot auto maps the chosen caching tool to use these tags. If none are provided, Spring Boot runs its default impl, not recommended for prod. Consider using redis or similar.
     fun list(
         @RequestParam(required = false) courseName: String?,
         @PageableDefault(size = 10) pagination: Pageable
@@ -36,7 +36,7 @@ class TopicController(private val topicService: TopicService) {
 
     @PostMapping
     @Transactional
-    @CacheEvict("topics", allEntries = true)
+    @CacheEvict("topics", allEntries = true) // this clears the "topics" cache
     fun create(
         @RequestBody @Valid form: NewTopicForm,
         uriBuilder: UriComponentsBuilder
@@ -48,7 +48,7 @@ class TopicController(private val topicService: TopicService) {
 
     @PutMapping
     @Transactional
-    @CacheEvict("topics", allEntries = true)
+    @CacheEvict("topics", allEntries = true) // this clears the "topics" cache
     fun update(@RequestBody @Valid form: UpdateTopicForm): TopicView {
         return topicService.update(form)
     }
@@ -56,7 +56,7 @@ class TopicController(private val topicService: TopicService) {
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Transactional
-    @CacheEvict("topics", allEntries = true)
+    @CacheEvict("topics", allEntries = true) // this clears the "topics" cache
     fun delete(@PathVariable id: Long) {
         topicService.delete(id)
     }
